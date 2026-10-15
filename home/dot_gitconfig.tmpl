@@ -1,0 +1,90 @@
+{{- /*
+  dot_gitconfig.tmpl - managed global Git configuration.
+
+  Values under [user] come from .chezmoi.toml.tmpl so a fresh machine only has
+  to answer the init prompts once.
+
+  No credential helper ever writes to disk: the cache helper keeps tokens in
+  memory for 15 minutes and forgets them when the process exits.
+*/ -}}
+[user]
+	name = {{ .gitName | quote }}
+	email = {{ .gitEmail | quote }}
+	useConfigOnly = true
+
+[init]
+	defaultBranch = {{ .gitDefaultBranch | quote }}
+
+[core]
+	# Linux workstations do not need CRLF conversion.
+	autocrlf = input
+	editor = {{ if eq .editorChoice "code" }}"code --wait"{{ else if eq .editorChoice "nvim" }}"nvim"{{ else }}nano{{ end }}
+	pager = "less -FRX"
+	excludesfile = ~/.config/git/ignore
+
+[pull]
+	# "rebase" keeps a linear history, "ff-only" refuses to create merge
+	# commits, "merge" is the traditional default. Chosen at chezmoi init.
+	rebase = {{ if eq .gitRebaseMode "rebase" }}true{{ else if eq .gitRebaseMode "ff-only" }}ff-only{{ else }}false{{ end }}
+
+[fetch]
+	# Delete remote-tracking branches that no longer exist upstream.
+	prune = true
+	pruneTags = true
+
+[branch]
+	sort = -committerdate
+
+[push]
+	# Tags are released deliberately, never as a side effect of a branch push.
+	followTags = false
+	default = simple
+	autoSetupRemote = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[rerere]
+	# Reuse a conflict resolution instead of solving the same conflict twice.
+	enabled = true
+	autoupdate = true
+
+[diff]
+	colorMoved = zebra
+	algorithm = histogram
+	renames = copies
+	mnemonicPrefix = true
+
+[color]
+	ui = auto
+
+[status]
+	submoduleSummary = true
+
+[tag]
+	sort = version:refname
+
+[log]
+	date = iso
+
+[credential]
+	# Memory only. Nothing is ever written to ~/.git-credentials.
+	helper = cache --timeout=900
+
+[transfer]
+	fsckobjects = true
+
+[alias]
+	# Every alias maps to a plain Git command that can be typed by hand.
+	# Nothing here hides a destructive default.
+	st = status --short --branch
+	co = checkout
+	br = branch
+	ci = commit --verbose
+	amend = commit --amend --no-edit
+	unstage = reset HEAD --
+	last = log -1 HEAD --stat
+	graph = log --oneline --graph --decorate --all -20
+	pullf = pull --ff-only
+	changed = diff --name-status @{upstream}...HEAD
+	lg = log --graph --abbrev-commit --decorate --date=short --pretty=format:'%C(auto)%h%d %s %C(dim)(%an, %ad)'

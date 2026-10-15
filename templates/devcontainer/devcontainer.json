@@ -1,0 +1,84 @@
+// devcontainer.json - full stack development container.
+//
+// Copy the whole `templates/devcontainer/` directory to the root of a project
+// and adjust the names to match that project. Commit it: the container is
+// part of the project's reproducibility contract.
+//
+// Design rules:
+//   * pin the base image by tag, and prefer a digest in production images
+//   * mount the source as a bind mount so the host editor stays fast
+//   * never bake a secret into the image; use devContainerEnv or a forwarded
+//     .env.local that stays outside the repository
+//   * keep the container definition minimal: it defines a toolchain, not the
+//     whole operating system
+
+{
+  "name": "Project full stack development",
+
+  // Pin the image. Prefer `image@sha256:...` for anything long lived.
+  "image": "mcr.microsoft.com/devcontainers/base:noble",
+
+  "features": {
+    // Toolchains come from dev container features, pinned by version.
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+
+  // Secrets are injected at run time and never committed.
+  "containerEnv": {
+    "NODE_ENV": "development"
+  },
+
+  "remoteEnv": {
+    // Reference a local file that is git-ignored, not a literal value.
+    "DATABASE_URL": "${localEnv:DATABASE_URL}"
+  },
+
+  "forwardPorts": [3000, 5432, 6379, 8000],
+  "portsAttributes": {
+    "3000": { "label": "application", "onAutoForward": "notify" },
+    "5432": { "label": "postgres", "onAutoForward": "silent" },
+    "6379": { "label": "redis", "onAutoForward": "silent" },
+    "8000": { "label": "api", "onAutoForward": "notify" }
+  },
+
+  // Bind mounts keep file watching fast and let the host own the files.
+  "mounts": [
+    {
+      "source": "${localWorkspaceFolder}",
+      "target": "/workspace",
+      "type": "bind"
+    }
+  ],
+
+  "postCreateCommand": "npm install",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "ms-python.python",
+        "prisma.prisma"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.eol": "\n",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

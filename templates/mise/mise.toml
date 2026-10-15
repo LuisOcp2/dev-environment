@@ -1,0 +1,66 @@
+# mise.toml - per project tool versions.
+#
+# Copy this file to the root of a project and adjust the [tools] section.
+# Commit it: it is the shared, reproducible contract for the project's
+# toolchain.
+#
+# Priority, lowest to highest:
+#   1. ~/.config/mise/config.toml   (global defaults, managed by chezmoi)
+#   2. mise.toml  at the project root           <-- commit this
+#   3. mise.local.toml found walking up        <-- never commit this
+#
+# Commands:
+#   mise install          install everything declared here
+#   mise ls               show what is configured and installed
+#   mise current          show the active version of each tool
+#   mise use -p node@20   add a tool to THIS project's mise.toml
+#   mise use -g node@22   change the global default
+#   mise where node@20    print the install directory
+#
+# Reference: https://mise.jdx.dev/configuration.html
+
+[tools]
+# --- Declare exactly what this project needs ------------------------------
+# A project that only needs Node does not inherit a global Java install:
+# listing only what is required keeps the environment reproducible and the
+# install fast.
+
+node = "22"
+pnpm = "10"
+python = "3.12"
+uv = "latest"
+
+# Optional tools, added only when the project really uses them:
+# java = "temurin-21"
+# php = "8.3"
+# bun = "1"
+# go = "1.23"
+# rust = "stable"
+# terraform = "1.9"
+
+# Pin an exact patch version when a bug depends on it, and say why:
+# node = "22.11.0"   # pinned: esbuild regression below this version
+
+[env]
+# Make the project's own binaries win over global ones.
+_.path = "./node_modules/.bin"
+
+# Set a default value for an environment variable, overridable by mise.local.toml.
+# NODE_ENV = "development"
+
+[settings]
+# Keep the install isolated from the global config for reproducible CI.
+# Not needed for most projects; uncomment when two projects fight over versions.
+
+# tasks are optional; a Justfile or an npm script may already be the convention
+[tasks.dev]
+description = "Start the development server"
+run = "pnpm dev"
+
+[tasks.test]
+description = "Run the test suite"
+run = "pnpm test"
+
+[tasks.verify]
+description = "Format check, lint, typecheck and test"
+run = "pnpm verify"

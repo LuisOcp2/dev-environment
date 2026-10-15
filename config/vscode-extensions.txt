@@ -1,0 +1,56 @@
+# ---------------------------------------------------------------------------
+# VS Code extension recommendations.
+#
+# Installed by scripts/install-vscode-extensions.sh through `code --install-extension`.
+# The script is idempotent: already installed extensions are reported as SKIPPED.
+#
+# Keep this list free of global formatters that would fight each other.
+# Formatting is configured per language in home/dot_config/Code/User/settings.json.
+# ---------------------------------------------------------------------------
+
+# --- Core editing ----------------------------------------------------------
+ms-vscode.vscode-json
+ms-vscode.vscode-yaml
+ms-vscode.vscode-toml
+ms-vscode.vscode-eslint
+ms-vscode.vscode-prettier
+
+# --- Shell and dotfiles ----------------------------------------------------
+foxundermoon.shell-format
+timtadh.easy-symlinks
+
+# --- Git --------------------------------------------------------------------
+eamodio.gitlens
+
+# --- Containers ------------------------------------------------------------
+ms-azuretools.vscode-docker
+ms-vscode-remote.remote-containers
+
+# --- Python ----------------------------------------------------------------
+ms-python.python
+ms-python.vscode-pylance
+charliermarsh.ruff
+ms-python.debugpy
+
+# --- Java ------------------------------------------------------------------
+vscjava.vscode-java-pack
+
+# --- SQL --------------------------------------------------------------------
+mtxr.sqltools
+mtxr.sqltools-driver-pg
+mssql.vscode-mssql
+
+# --- Markdown and documentation --------------------------------------------
+yzhang.markdown-all-in-one
+bierner.markdown-mermaid
+mermaidchart.vscode-mermaid-preview
+
+# --- IaC and API -----------------------------------------------------------
+hashicorp.terraform
+42Crunch.vacuum
+humao.rest-client
+
+# --- Teaching --------------------------------------------------------------
+# Presentation and diagram helpers used in classes.
+yzhang.markdown-preview-github-styles
+dsznajder.es7-react-js-snippets

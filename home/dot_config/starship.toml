@@ -1,0 +1,118 @@
+# ~/.config/starship.toml - shell prompt.
+#
+# Managed by chezmoi. Goals: fast, professional, readable at 80 columns.
+# Every module below ships with starship, so no external plugin is required.
+#
+# Test it with:  starship prompt
+# Preview a module with:  starship explain
+
+"$schema" = "https://raw.githubusercontent.com/starship/starship/master/.github/starship.schema.json"
+
+# ---------------------------------------------------------------------------
+# General
+# ---------------------------------------------------------------------------
+format = """
+$directory\
+$git_branch\
+$nodejs\
+$python\
+$java\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+add_newline = false
+command_timeout = 1000
+use_stdin = false
+
+# ---------------------------------------------------------------------------
+# Directory
+# ---------------------------------------------------------------------------
+[directory]
+style = "bold cyan"
+truncation_length = 3
+truncate_to_repo = true
+format = '[$path]($style) '
+
+# ---------------------------------------------------------------------------
+# Git
+# ---------------------------------------------------------------------------
+[git_branch]
+symbol = " "
+style = "bold purple"
+format = '[$symbol($branch )]($style)'
+# Only pay the cost of reading git state when the prompt is actually drawn.
+disabled = false
+
+[git_state]
+style = ["bold yellow", "bold red", "bold green", "bold blue"]
+format = ' [$state]($style) '
+conflicted = "="
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+untracked = "? "
+stashed = "⇡"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✖"
+
+[git_metrics]
+added = "＋"
+deleted = "－"
+conflict = "＝"
+# Keep the status line short: counts only.
+yanked = "'"
+style = "bold red"
+format = '([+$added -$deleted |$conflict] )'
+
+[git_commit]
+tag = " 󰊢 "
+style = "bold yellow"
+
+# ---------------------------------------------------------------------------
+# Languages
+# ---------------------------------------------------------------------------
+[nodejs]
+symbol = " node "
+style = "bold green"
+format = 'via [$symbol($version )]($style)'
+
+[python]
+symbol = " python "
+style = "bold blue"
+format = 'via [$symbol($version )]($style)'
+
+[java]
+symbol = " java "
+style = "bold magenta"
+format = 'via [$symbol($version )]($style)'
+
+# ---------------------------------------------------------------------------
+# Containers
+# ---------------------------------------------------------------------------
+# Shows only when a context is explicitly selected, so it stays quiet by
+# default on a developer machine.
+[docker_context]
+format = 'via [docker:$symbol]($style) '
+symbol = " "
+
+# ---------------------------------------------------------------------------
+# Command duration
+# ---------------------------------------------------------------------------
+# Shows only for commands slower than 2 seconds.
+[cmd_duration]
+min_time = 2000
+format = 'took [$duration]($style) '
+style = "bold yellow"
+
+# ---------------------------------------------------------------------------
+# Character
+# ---------------------------------------------------------------------------
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vicmd_symbol = "[❮](bold yellow)"
+style = "bold"

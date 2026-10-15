@@ -1,0 +1,26 @@
+# ---------------------------------------------------------------------------
+# cloud.txt - infrastructure and cloud CLIs.
+#
+# Everything here is OPTIONAL on purpose. Heavy cloud CLIs are not installed
+# unless the profile explicitly enables them, and optional entries are skipped
+# silently when the local apt repositories do not provide them.
+#
+# Recommended install path for the heavy ones:
+#   kubectl  -> mise (https://mise.jdx.dev/registry.html#kubectl)
+#   terraform-> mise
+#   awscli   -> pipx or uv tool install
+#   azcli    -> snap, pipx or the Microsoft apt repository
+# ---------------------------------------------------------------------------
+
+# Lightweight, always safe to install
+openjdk-21-jdk-headless
+?openssh-client
+
+# Optional infrastructure tools
+?kubectl
+?kubernetes-client
+
+# Optional observability and transfer helpers
+?filezilla
+?maven
+?gradle

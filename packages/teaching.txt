@@ -1,0 +1,26 @@
+# ---------------------------------------------------------------------------
+# teaching.txt - classroom and content authoring tooling.
+#
+# Keep this manifest light: teaching machines are often laptops with limited
+# disk space, and everything here must install quickly.
+# ---------------------------------------------------------------------------
+
+# Language runtimes used in courses
+openjdk-21-jdk-headless
+default-jdk
+
+# Diagram and documentation helpers
+graphviz
+?pandoc
+
+# Slide and markup support
+?imagemagick
+?optipng
+
+# Version control with a GUI for students
+git
+git-gui
+
+# Python scientific stack commonly used in teaching examples
+?python3-numpy
+?python3-pandas

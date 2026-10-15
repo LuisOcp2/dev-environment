@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+#
+# ~/.profile - login environment shared by every POSIX shell.
+#
+# Managed by chezmoi. Keep this file small and side-effect free: it runs once
+# per login, not once per prompt.
+#
+# Shell specific configuration lives in ~/.zshrc and ~/.bashrc.
+
+# --- PATH ------------------------------------------------------------------
+# ~/.local/bin holds the user installed binaries: chezmoi, mise, starship,
+# tools installed by pipx/uv. It is prepended once and never duplicated.
+
+if [ -d "$HOME/.local/bin" ]; then
+    case ":${PATH}:" in
+        *":$HOME/.local/bin:"*) ;;
+        *) PATH="$HOME/.local/bin:${PATH}" ;;
+    esac
+fi
+
+# Node version managers that install into ~/.local/bin or ~/.npm-global.
+if [ -d "$HOME/.local/share/mise/shims" ]; then
+    case ":${PATH}:" in
+        *":$HOME/.local/share/mise/shims:"*) ;;
+        *) PATH="$HOME/.local/share/mise/shims:${PATH}" ;;
+    esac
+fi
+
+export PATH
+
+# --- XDG base directories ---------------------------------------------------
+# Exported here so every later tool, including GUI applications started from
+# the session, agrees on where configuration and state live.
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
+
+# --- Editor ----------------------------------------------------------------
+if [ -z "${EDITOR:-}" ]; then
+    if command -v code >/dev/null 2>&1; then
+        export EDITOR="code --wait"
+    elif command -v nvim >/dev/null 2>&1; then
+        export EDITOR="nvim"
+    else
+        export EDITOR="nano"
+    fi
+fi
+export VISUAL="${VISUAL:-$EDITOR}"
+
+# --- Locale ----------------------------------------------------------------
+if [ -z "${LANG:-}" ]; then
+    export LANG="en_US.UTF-8"
+fi
+export LC_ALL="${LC_ALL:-$LANG}"
+
+# --- Pager -----------------------------------------------------------------
+if command -v bat >/dev/null 2>&1; then
+    export PAGER="less -FRX"
+    export BAT_PAGER="less -FRX"
+elif command -v less >/dev/null 2>&1; then
+    export PAGER="less -FRX"
+fi
+
+# --- Browsers in text mode -------------------------------------------------
+# Only when the corresponding terminal browser exists; never breaks otherwise.
+if command -v sensible-browser >/dev/null 2>&1; then
+    export BROWSER="sensible-browser"
+elif command -v xdg-open >/dev/null 2>&1; then
+    export BROWSER="xdg-open"
+fi
+
+# --- Private settings ------------------------------------------------------
+# Optional machine-local file, never managed by chezmoi and never committed.
+# Use it for API endpoints or personal PATH tweaks, NOT for secrets:
+# prefer a password manager or an exported environment variable instead.
+if [ -f "$HOME/.profile.local" ]; then
+    # shellcheck disable=SC1091 # optional, user owned file
+    . "$HOME/.profile.local"
+fi

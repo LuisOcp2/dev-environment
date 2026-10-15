@@ -1,0 +1,57 @@
+{{- /*
+  .chezmoi.toml.tmpl - chezmoi configuration template.
+
+  chezmoi renders this file ONCE, during `chezmoi init`, into
+  ${XDG_CONFIG_HOME:-~/.config}/chezmoi/chezmoi.toml. The result is machine
+  local state and is never committed to git.
+
+  The [data] values become template variables in every managed file:
+    {{ .gitName }}
+    {{ .gitEmail }}
+    {{ .gitDefaultBranch }}
+    {{ .gitRebaseMode }}
+    {{ .editorChoice }}
+    {{ .shellChoice }}
+
+  promptStringOnce / promptChoiceOnce only ask the first time a machine is
+  initialised. Force the questions again with:
+    chezmoi init --prompt
+
+  SECURITY: never put a password, token or private key in this file. The
+  values below are public identity and UI preferences only.
+*/ -}}
+
+{{- $gitName := "Luis Miguel Ocampo Guerrero" -}}
+{{- $gitEmailDefault := "" -}}
+{{- $branchDefault := "main" -}}
+{{- $rebaseChoices := list "rebase" "ff-only" "merge" -}}
+{{- $editorChoices := list "code" "nvim" "nano" -}}
+{{- $shellChoices := list "zsh" "bash" -}}
+
+[data]
+    gitName = {{ $gitName | quote }}
+    gitEmail = {{ promptStringOnce . "gitEmail" "Git email address used for commits" $gitEmailDefault | quote }}
+    gitDefaultBranch = {{ promptStringOnce . "gitDefaultBranch" "Default Git branch" $branchDefault | quote }}
+    gitRebaseMode = {{ promptChoiceOnce . "gitRebaseMode" "Git pull strategy" $rebaseChoices "rebase" | quote }}
+    editorChoice = {{ promptChoiceOnce . "editorChoice" "Preferred editor CLI" $editorChoices "code" | quote }}
+    shellChoice = {{ promptChoiceOnce . "shellChoice" "Preferred login shell" $shellChoices "zsh" | quote }}
+
+    # Prompt behaviour. Deliberately conservative.
+    promptStyle = "plain"
+    enableAutosuggestions = true
+    enableSyntaxHighlighting = true
+
+    # Reverse proxies / platform projects that are never installed by default.
+    installDocker = false
+    installAzureCli = false
+    installAwsCli = false
+
+# Applied file permissions. 0o22 == umask 022, the standard developer default.
+umask = 0o22
+
+[git]
+    autoCommit = false
+    autoPush = false
+
+[diff]
+    color = "auto"

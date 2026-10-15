@@ -1,0 +1,17 @@
+# ---------------------------------------------------------------------------
+# design.txt - frontend and design workflow support.
+# ---------------------------------------------------------------------------
+
+# Font and asset tooling available in apt
+?imagemagick
+?optipng
+?webp
+?graphviz
+
+# Diagram and rendering helpers used in documentation
+graphviz
+?plantuml
+
+# Headless browser used for visual regression and E2E smoke tests
+?chromium-browser
+?firefox

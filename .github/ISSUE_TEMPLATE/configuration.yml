@@ -1,0 +1,87 @@
+name: Configuration request
+description: Propose a new package, profile, dotfile, skill, agent or command.
+title: "[config] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose an addition to the environment.
+
+        Before opening the issue, read the relevant guide, because most
+        additions are designed to require no code change:
+
+        | I want to add...       | Guide                                                    |
+        | ---------------------- | -------------------------------------------------------- |
+        | a system package       | [`docs/PROFILES.md`](../blob/main/docs/PROFILES.md)      |
+        | a profile              | [`docs/PROFILES.md`](../blob/main/docs/PROFILES.md)      |
+        | a dotfile              | [`docs/ADDING-CONFIGURATION.md`](../blob/main/docs/ADDING-CONFIGURATION.md) |
+        | a skill                | [`docs/ADDING-SKILLS.md`](../blob/main/docs/ADDING-SKILLS.md) |
+        | an OpenCode agent      | [`docs/OPENCODE.md`](../blob/main/docs/OPENCODE.md)      |
+        | an OpenCode command    | [`docs/OPENCODE.md`](../blob/main/docs/OPENCODE.md)      |
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - a system package
+        - a profile
+        - a dotfile or configuration file
+        - a tool version
+        - an AI skill
+        - an OpenCode agent
+        - an OpenCode command
+        - a script
+        - documentation
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the situation, not the solution. What is missing today?
+      placeholder: A classroom machine cannot run the Java examples without installing a full JDK.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: |
+        Which files would this touch? The design goal is that each addition
+        requires editing exactly one file, so name that file.
+    validations:
+      required: true
+
+  - type: textarea
+    id: profile-impact
+    attributes:
+      label: Which profiles are affected?
+      description: Only relevant for packages and profiles.
+      placeholder: minimal and teaching
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Including "do nothing". This is often the right answer.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: This keeps the `minimal` profile small; heavier tooling belongs behind a profile flag.
+        - label: This works on Ubuntu and TuxedoOS without a new package manager.
+        - label: This adds no secret and no credential of any kind.
+        - label: This requires editing no existing script.
+    validations:
+      required: false

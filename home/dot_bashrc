@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+#
+# ~/.bashrc - interactive bash configuration.
+#
+# Managed by chezmoi. Bash is the guaranteed fallback shell: this file is
+# intentionally simpler than ~/.zshrc and depends on nothing that might be
+# missing on a freshly installed system.
+#
+# Shared environment variables live in ~/.profile, not here.
+
+# --- Non interactive guard --------------------------------------------------
+case $- in
+    *i*) ;;
+    *) return ;;
+esac
+
+# --- History ----------------------------------------------------------------
+HISTCONTROL=ignoreboth
+HISTSIZE=20000
+HISTFILESIZE=20000
+HISTIGNORE='ls:ll:la:pwd:exit:clear:history:h:cd:..:...'
+shopt -s histappend
+shopt -s checkwinsize
+shopt -s cdspell
+shopt -s autocd
+
+# --- Shell behaviour --------------------------------------------------------
+shopt -s no_empty_cmd_completion
+shopt -s cmdhist
+shopt -s lithist
+
+# --- Window size ------------------------------------------------------------
+# Redraw the prompt when the terminal is resized.
+update_win_size() {
+    local previous_status="$?"
+    # shellcheck disable=SC2034 # read by the terminal on the next redraw
+    LINES="$(tput lines 2>/dev/null || printf '24')"
+    # shellcheck disable=SC2034
+    COLUMNS="$(tput cols 2>/dev/null || printf '80')"
+    return "$previous_status"
+}
+if [ -x "$(command -v tput 2>/dev/null || printf '/nonexistent')" ]; then
+    trap update_win_size WINCH
+fi
+
+# --- Aliases ----------------------------------------------------------------
+if [ -x /usr/bin/batcat ]; then
+    alias ls='ls --color=auto'
+    alias cat='batcat'
+    alias man='batman'
+    alias catp='bat --style=numbers,grid --paging=always'
+fi
+
+alias ll='ls -alh --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias grep='grep --color=auto'
+alias egrep='grep -E --color=auto'
+alias fgrep='grep -F --color=auto'
+alias mkdir='mkdir -p'
+alias df='df -h'
+alias du='du -h'
+alias free='free -h'
+alias ports='ss -tulpn'
+alias reload-shell='exec $SHELL -l'
+
+# --- Functions --------------------------------------------------------------
+
+mkcd() {
+    if [ -z "${1:-}" ]; then
+        printf 'usage: mkcd <path>\n' >&2
+        return 1
+    fi
+    mkdir -p -- "$1" && cd -- "$1" || return 1
+}
+
+extract() {
+    if [ $# -eq 0 ]; then
+        printf 'usage: extract <file>\n' >&2
+        return 1
+    fi
+    local file="$1"
+    case "$file" in
+        *.tar.bz2 | *.tbz2) tar -xjf "$file" ;;
+        *.tar.gz | *.tgz) tar -xzf "$file" ;;
+        *.tar.xz | *.txz) tar -xJf "$file" ;;
+        *.tar) tar -xf "$file" ;;
+        *.gz) gunzip "$file" ;;
+        *.xz) unxz "$file" ;;
+        *.zip) unzip "$file" ;;
+        *)
+            printf 'unsupported archive: %s\n' "$file" >&2
+            return 1
+            ;;
+    esac
+}
+
+# --- Completion -------------------------------------------------------------
+if [ -r /usr/share/bash-completion/bash_completion ]; then
+    # shellcheck disable=SC1091 # distro provided
+    . /usr/share/bash-completion/bash_completion
+elif [ -r /etc/bash_completion ]; then
+    # shellcheck disable=SC1091 # distro provided
+    . /etc/bash_completion
+fi
+
+# --- Optional integrations --------------------------------------------------
+# Each block is skipped silently when the tool is not installed.
+
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+else
+    PS1='\[\e[1;36m\]\w\[\e[0m\]\[\e[1;34m\] $(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)\[\e[0m\]$ \[\e[0m\]'
+fi
+
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook bash)"
+fi
+
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate bash --shims)"
+fi
+
+# --- Machine local overrides ------------------------------------------------
+# Not managed by chezmoi. Never put secrets here.
+if [ -f "$HOME/.bashrc.local" ]; then
+    # shellcheck disable=SC1091 # optional, user owned file
+    . "$HOME/.bashrc.local"
+fi

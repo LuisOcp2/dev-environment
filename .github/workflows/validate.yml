@@ -1,0 +1,72 @@
+# Validate the repository on pull requests and pushes to main.
+#
+# This workflow is strictly read only with respect to the repository and the
+# runner's user account:
+#   * it never runs `chezmoi apply`
+#   * it never installs packages on the runner
+#   * it never touches a secret or a credential store
+#
+# The heavyweight logic lives in scripts/validate-repository.sh so that the
+# same checks run locally with `make validate`.
+
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# The workflow needs read access only. No write scopes at all.
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          # Full history is not needed, and a shallower clone is faster.
+          fetch-depth: 1
+
+      - name: Set up the Git safe directory
+        # checkout leaves the workspace owned by a different uid than the
+        # runner user, which makes `git ls-files` fail inside the validator.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Report the environment
+        run: |
+          echo "runner : $RUNNER_OS"
+          echo "bash   : ${BASH_VERSION:-unknown}"
+          echo "shellcheck : $(command -v shellcheck || echo MISSING)"
+          echo "shfmt       : $(command -v shfmt || echo MISSING)"
+          echo "jq         : $(command -v jq || echo MISSING)"
+          echo "make       : $(command -v make || echo MISSING)"
+
+      - name: Bash syntax check
+        run: bash -n bootstrap.sh && echo "bash -n bootstrap.sh: ok"
+
+      - name: Run the repository validator
+        run: ./scripts/validate-repository.sh
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "### Validation summary"
+            echo ""
+            echo "- commit: ${{ github.sha }}"
+            echo "- event: ${{ github.event_name }}"
+            echo ""
+            echo "Re-run locally with: \`make validate\`"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,94 @@
+# Global Git excludes, applied to every repository on this machine.
+#
+# Managed by chezmoi. Add machine specific entries to
+# ~/.config/git/ignore.local instead: it is ignored by chezmoi and by git
+# automatically (see .git/info/exclude conventions).
+
+# --- Secrets and credentials ----------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*.netrc
+.netrc
+.npmrc
+.pypirc
+credentials*
+secrets*
+*_rsa
+*.kdbx
+kubeconfig
+kube.config
+*.ovpn
+id_dsa
+id_dsa.*
+
+# --- AI provider credentials ----------------------------------------------
+.auth.json
+.claude.json.local
+.opencode.local.json
+
+# --- Operating system noise -----------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.desktop
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# --- Editor and tooling state ----------------------------------------------
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+*.sublime-project
+*.sublime-workspace
+
+# --- Build output and dependencies -----------------------------------------
+node_modules/
+vendor/
+dist/
+build/
+target/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+.gradle/
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# --- Test and tooling caches -----------------------------------------------
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.eslintcache
+__pycache__/
+*.py[cod]
+
+# --- Logs ------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

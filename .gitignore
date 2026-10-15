@@ -1,0 +1,88 @@
+# ---------------------------------------------------------------------------
+# Secrets and credentials: never commit real values.
+# Only *.example / *.example.* files with obvious placeholders are allowed.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_rsa.*
+id_ecdsa
+id_ecdsa.*
+id_ed25519
+id_ed25519.*
+*.pub
+credentials*
+secrets*
+secret.*
+token*
+*_token
+auth.json
+.netrc
+.npmrc.local
+.pypirc
+.aws/
+.ssh/
+.gnupg/
+kubeconfig
+kube.config
+
+# ---------------------------------------------------------------------------
+# OS noise
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Logs and caches
+# ---------------------------------------------------------------------------
+*.log
+.cache/
+tmp/
+temp/
+.cache
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------------------------------------------------------------------------
+# Build output
+# ---------------------------------------------------------------------------
+dist/
+build/
+target/
+vendor/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# ---------------------------------------------------------------------------
+# Local-only and machine-specific configuration
+# ---------------------------------------------------------------------------
+private/
+mise.local.toml
+.envrc.local
+.local/
+.chezmoi.local.*
+*.local
+*.local.*
+!*.local.example
+
+# Validation and editor artifacts
+.validate-cache/
+.idea/
+.vscode-test/
+*.swp
+*.swo
+*~

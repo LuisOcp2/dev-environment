@@ -1,0 +1,65 @@
+# compose.yml - development infrastructure services for a full stack project.
+#
+# Copy this file to the root of a project and rename the services to match.
+# It provides stateful services only: databases and caches. Application code
+# runs in the dev container, not in a container defined here.
+#
+# RULES
+#   * never hardcode a password; use a variable with a clearly local default
+#   * bind published ports to 127.0.0.1 so nothing is exposed to the network
+#   * every service has an explicit healthcheck
+#   * volumes are named, never anonymous
+#   * this file is for development only: it is NOT a production compose file
+
+name: project-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    # Development only. Override with POSTGRES_PASSWORD in a .env file that is
+    # git-ignored, or with an environment substitution.
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # Faster startup on a developer machine; not for production.
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    # Development only: no authentication, no persistence guarantee.
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # Optional: only start when explicitly requested, so a lightweight project
+  # does not pay for a service it never uses.
+  #   docker compose --profile observability up -d
+  mailpit:
+    image: axllent/mailpit:latest
+    profiles: ["observability"]
+    ports:
+      - "127.0.0.1:8025:8025" # web interface
+      - "127.0.0.1:1025:1025" # SMTP
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+    name: project-postgres-data

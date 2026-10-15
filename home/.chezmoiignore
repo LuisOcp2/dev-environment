@@ -1,0 +1,49 @@
+# .chezmoiignore - files in the source state that must never be applied.
+#
+# Because .chezmoiroot points at home/, this file controls what chezmoi
+# considers part of the managed home directory.
+#
+# Anything listed here is ignored both by `chezmoi add` and `chezmoi apply`.
+# Runtime state and machine-specific files belong here.
+
+# Version control internals
+.git
+.git/**
+**/.git
+**/.git/**
+
+# Secrets and machine local state. Never managed, never committed.
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/id_rsa*
+**/id_ed25519*
+**/.netrc
+**/.npmrc
+**/.pypirc
+**/.aws
+**/.ssh
+**/.gnupg
+**/kubeconfig
+
+# Local overrides that must stay per machine
+**/mise.local.toml
+**/.chezmoi.local.*
+**/.envrc.local
+
+# Caches and build output that could appear in a dotfiles tree
+**/.cache/**
+**/node_modules/**
+**/__pycache__/**
+**/.DS_Store
+**/*.log
+**/.local/share/Trash/**
+
+# Editor and OS noise
+**/.vscode-test/**
+**/*.swp
+**/*.swo
+**/*~

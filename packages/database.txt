@@ -1,0 +1,22 @@
+# ---------------------------------------------------------------------------
+# database.txt - local database clients and migration helpers.
+#
+# Servers are NOT installed here on purpose: a development machine uses
+# containers or remote instances for servers. Only clients are local.
+# ---------------------------------------------------------------------------
+
+# PostgreSQL
+postgresql-client
+?postgresql-client-common
+
+# MySQL / MariaDB
+mysql-client
+?default-mysql-client
+
+# Redis
+redis-tools
+?redis-sentinel
+
+# Generic helpers
+?sqlite3
+?libsqlite3-dev

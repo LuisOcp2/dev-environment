@@ -1,0 +1,241 @@
+#!/usr/bin/env bash
+#
+# ~/.zshrc - interactive zsh configuration.
+#
+# Managed by chezmoi.
+#
+# Rules this file follows on purpose:
+#   1. Never fail when an optional tool is missing.
+#   2. Never download anything at shell startup.
+#   3. Never duplicate PATH entries.
+#   4. Never hide a destructive default behind an alias.
+#   5. Keep everything interactive; put shared env in ~/.profile.
+#
+# bash remains a fully functional fallback: see ~/.bashrc.
+
+# --- Non interactive guard --------------------------------------------------
+# Some tools spawn `zsh -c "..."`; skip prompt heavy configuration there.
+if [ -z "${ZSH_VERSION:-}" ] || ! [[ -o interactive ]]; then
+    return 0 2>/dev/null || exit 0
+fi
+
+# --- History ----------------------------------------------------------------
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS      # remove older duplicates when a new one is added
+setopt HIST_IGNORE_ALL_DUPS  # remove all duplicates, not just consecutive ones
+setopt HIST_REDUCE_BLANKS    # drop extra blanks before saving
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+
+# --- General shell behaviour ------------------------------------------------
+setopt interactive_comments  # allow comments in interactive commands
+setopt append_history        # keep multiple sessions readable
+setopt no_beep
+setopt auto_cd               # `cd ..` without arguments
+setopt auto_pushd            # keep a directory stack on `cd`
+setopt pushd_ignore_dups
+setopt extended_glob
+unsetopt correct            # never silently rewrite a command
+unsetopt beep
+
+setopt no_global_rcs         # do not read /etc/zsh/zshenv as a user
+
+# --- Completion -------------------------------------------------------------
+if [ -n "${ZSH_COMPDUMP:-}" ]; then
+    :
+else
+    ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump"
+fi
+mkdir -p "${ZSH_COMPDUMP:h}" 2>/dev/null || true
+if [ -r "$ZSH_COMPDUMP" ]; then
+    zcompdump "$ZSH_COMPDUMP"
+fi
+setopt noautomenu
+
+# Bash completion is optional; missing on a minimal system is not an error.
+if [ -r /usr/share/bash-completion/bash_completion ]; then
+    autoload -Uz compinit
+    compinit -d "$ZSH_COMPDUMP" -u
+fi
+
+# --- Key bindings -----------------------------------------------------------
+bindkey -e                          # emacs style bindings, familiar everywhere
+bindkey '^[[3~'   backward-kill-word # alt+backspace deletes a word
+bindkey '^[[1;5D' backward-word      # ctrl+left
+bindkey '^[[1;5C' forward-word       # ctrl+right
+bindkey '^[[H'   beginning-of-line
+bindkey '^[[F'   end-of-line
+bindkey '^[[3;5~' kill-line          # ctrl+delete
+
+# --- Navigation that works everywhere ---------------------------------------
+autoload -Uz up-line-or-beginning-search down-line-or-history 2>/dev/null || true
+bindkey '^[[A' up-line-or-beginning-search 2>/dev/null || true
+bindkey '^[[B' down-line-or-history 2>/dev/null || true
+
+# --- Aliases ----------------------------------------------------------------
+# Only safe, additive aliases. Nothing destructive is hidden.
+
+alias ll='ls -lah --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# `ls` with icons only when the font supports it.
+if [[ "$TERM" == *-256color* || "$TERM" == *truecolor* ]]; then
+    alias ls='ls --color=auto'
+fi
+
+alias cat=batcat   # overridden to `cat` when bat is unavailable, see below
+
+alias cpv='cp -v'
+alias mv='mv -i'   # ask before overwriting
+alias rm='rm -i'   # ask before deleting
+
+alias mkdir='mkdir -p'
+alias df='df -h'
+alias du='du -h'
+alias free='free -h'
+alias ports='ss -tulpn'
+
+alias gitp='git push'
+alias gitpf='git push --force-with-lease'  # never plain --force
+alias gitlg='git log --graph --oneline --decorate --all -20'
+
+alias reload-shell='exec $SHELL -l'
+
+# `batcat` is a Debian/Ubuntu package name; fall back to real cat otherwise.
+if ! command -v batcat >/dev/null 2>&1; then
+    unalias cat 2>/dev/null || true
+fi
+
+# --- Functions --------------------------------------------------------------
+
+# mkcd: create a directory tree and enter it.
+mkcd() {
+    if [ -z "${1:-}" ]; then
+        printf 'usage: mkcd <path>\n' >&2
+        return 1
+    fi
+    mkdir -p -- "$1" && cd -- "$1" || return 1
+}
+
+# extract: unpack any common archive into the current directory.
+extract() {
+    if [ $# -eq 0 ]; then
+        printf 'usage: extract <file>\n' >&2
+        return 1
+    fi
+    local file="$1"
+    if [ ! -f "$file" ]; then
+        printf 'not a file: %s\n' "$file" >&2
+        return 1
+    fi
+    case "$file" in
+        *.tar.bz2 | *.tbz2) tar -xjf "$file" ;;
+        *.tar.gz | *.tgz) tar -xzf "$file" ;;
+        *.tar.xz | *.txz) tar -xJf "$file" ;;
+        *.tar.zst) tar --zstd -xf "$file" ;;
+        *.tar) tar -xf "$file" ;;
+        *.bz2) bunzip2 "$file" ;;
+        *.gz) gunzip "$file" ;;
+        *.xz) unxz "$file" ;;
+        *.zst) unzstd "$file" ;;
+        *.zip) unzip "$file" ;;
+        *.rar) unrar x "$file" ;;
+        *.7z) 7z x "$file" ;;
+        *)
+            printf 'unsupported archive: %s\n' "$file" >&2
+            return 1
+            ;;
+    esac
+}
+
+# take: create a directory, move sources into it, enter it.
+# Example: take screenshots *.png
+take() {
+    local dir="newdir"
+    if [ -n "${1:-}" ] && [ ! -e "$1" ]; then
+        dir="$1"
+        shift
+    fi
+    mkdir -p -- "$dir" || return 1
+    if [ $# -gt 0 ]; then
+        mv -- "$@" "$dir"/ || return 1
+    fi
+    cd -- "$dir" || return 1
+}
+
+# fkill: list processes matching a name and offer to kill them.
+fkill() {
+    if [ -z "${1:-}" ]; then
+        printf 'usage: fkill <process-name>\n' >&2
+        return 1
+    fi
+    local pid
+    pid="$(pgrep -f -- "$1")" || {
+        printf 'no process matched: %s\n' "$1" >&2
+        return 1
+    }
+    printf '%s\n' "$pid" | xargs -r ps -fp
+    if [ -t 0 ]; then
+        printf 'kill these processes? [y/N] '
+        local answer=""
+        read -r answer || return 1
+        case "${answer,,}" in
+            y | yes) printf '%s\n' "$pid" | xargs -r kill ;;
+            *) printf 'aborted\n' ;;
+        esac
+    fi
+}
+
+# --- Starship ---------------------------------------------------------------
+# Optional. A missing starship must not break the prompt.
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init zsh)"
+else
+    # Minimal fallback prompt so the shell stays usable.
+    PS1='%F{cyan}%~%f %# '
+fi
+
+# --- fzf --------------------------------------------------------------------
+# Optional key bindings, only when fzf is actually installed.
+if command -v fzf >/dev/null 2>&1; then
+    # shellcheck disable=SC1091 # optional, installed by some setups
+    [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] &&
+        source /usr/share/doc/fzf/examples/key-bindings.zsh
+    [ -f /usr/share/doc/fzf/examples/completion.zsh ] &&
+        source /usr/share/doc/fzf/examples/completion.zsh
+
+    export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border rounded"
+    export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || head -n 60 {}'"
+fi
+
+# --- direnv -----------------------------------------------------------------
+# Loads per project environment variables from .envrc.
+# direnv only trusts allowed files, so this is safe by default.
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook zsh)"
+fi
+
+# --- mise -------------------------------------------------------------------
+# Activates version managers. Shims are prepended by ~/.profile; this block
+# additionally enables `mise activate` when the shell is supported.
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh --shims)"
+fi
+
+# --- shfmt ------------------------------------------------------------------
+# Optional syntax highlighting for `shfmt -d`.
+if command -v shfmt >/dev/null 2>&1; then
+    alias shfmt='shfmt -i 2 -ci -w'
+fi
+
+# --- Machine local overrides ------------------------------------------------
+# Not managed by chezmoi. Never put secrets here; use a password manager.
+if [ -f "$HOME/.zshrc.local" ]; then
+    # shellcheck disable=SC1091 # optional, user owned file
+    . "$HOME/.zshrc.local"
+fi

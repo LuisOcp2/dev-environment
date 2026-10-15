@@ -1,0 +1,113 @@
+name: Bug report
+description: Something in the environment bootstrap, scripts or dotfiles does not work as documented.
+title: "[bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. This template is for defects in **this repository**, not in
+        a project you are building with it.
+
+        Never paste a secret. Do not include the contents of a real `.env`, an
+        API key, a token, a private key or cloud credentials. Replace values
+        with obviously fake placeholders.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you observe, and what did you expect instead?
+      placeholder: |
+        `make apply` did not update ~/.zshrc, and no error was printed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The exact commands you ran, in order, starting from a fresh terminal.
+      render: shell
+      placeholder: |
+        git clone https://github.com/LuisOcp2/dev-environment.git
+        cd dev-environment
+        ./bootstrap.sh --profile fullstack
+        make apply
+    validations:
+      required: true
+
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Profile in use
+      options:
+        - minimal
+        - frontend
+        - backend
+        - fullstack
+        - cloud
+        - teaching
+        - other
+        - not applicable
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Operating system
+      options:
+        - Ubuntu 22.04
+        - Ubuntu 24.04
+        - TuxedoOS
+        - Debian 12
+        - WSL2
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: |
+        Paste the output of these three commands. They are read only and safe
+        to run.
+
+        ```
+        ./scripts/detect-platform.sh
+        ./scripts/doctor.sh
+        ./scripts/verify.sh
+        ```
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related context
+      description: |
+        Anything else: a recent change, a log excerpt, the output of
+        `chezmoi diff`, or the link to the relevant documentation section.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I removed any secret, token or real `.env` value from this report.
+          required: true
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true

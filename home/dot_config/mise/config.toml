@@ -1,0 +1,62 @@
+# ~/.config/mise/config.toml - global tool versions.
+#
+# Managed by chezmoi. This file defines the DEFAULT set of runtimes available
+# in every directory. Individual projects override it with their own
+# `mise.toml` (committed) or `mise.local.toml` (never committed).
+#
+# Priority, lowest to highest:
+#   1. this global config
+#   2. a `mise.toml` at the project root          (commit this)
+#   3. a `mise.local.toml` found while walking up (never commit this)
+#
+# Commands:
+#   mise ls                list configured and installed tools
+#   mise install           install everything declared here and in the project
+#   mise current           show the active version of each tool
+#   mise use -g node@22    change the global default for one tool
+#   mise where node@22     print the install directory
+#
+# Documentation: https://mise.jdx.dev/configuration.html
+
+[tools]
+# --- JavaScript and TypeScript ---------------------------------------------
+# Node 22 is the current LTS line. Keep this as a major version so patch
+# updates arrive with `mise install` without editing this file.
+node = "22"
+
+# pnpm is pinned to a major line for the same reason. npm and yarn stay
+# available through node itself; they are not declared separately.
+pnpm = "10"
+
+# --- Python ----------------------------------------------------------------
+# 3.12 is the version aligned with the FastAPI and data tooling used in the
+# standard stack. Projects that need 3.11 or 3.13 override it in mise.toml.
+python = "3.12"
+
+# uv installs Python itself and manages virtual environments. It is the only
+# Python tool declared globally; pipx is available through the system python.
+# uv is a 0.x tool: pinning its major line would freeze it, so "latest" is the
+# only meaningful constraint here. Everything else above is pinned to a major.
+uv = "latest"
+
+# --- Java ------------------------------------------------------------------
+# Java 21 is the long term support release.
+java = "temurin-21"
+
+# --- Shell tooling ---------------------------------------------------------
+# shfmt is not reliably packaged by every Debian derivative, so it is managed
+# here instead. shellcheck comes from apt (see packages/base.txt).
+shfmt = "3"
+
+[settings]
+# Install tools in parallel: a large Node download no longer blocks Python.
+experimental = true
+
+# Keep the install path under the XDG data home instead of ~/.local/share/mise.
+# This matches the PATH entry created by scripts/install-mise.sh.
+# (Left at the mise default so `mise doctor` output stays predictable.)
+
+[env]
+# Put project-local binaries ahead of global ones inside a project.
+# Uncomment inside a project mise.toml, not in this global file.
+# _.path = "./node_modules/.bin"

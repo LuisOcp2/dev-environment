@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# fullstack.txt - Node.js, containers and application tooling.
+#
+# Language runtimes themselves are installed by mise (see config/profiles/).
+# This manifest only carries native/system level dependencies.
+# ---------------------------------------------------------------------------
+
+# Docker engine and compose plugin are installed by scripts/install-docker.sh
+# from the official Docker apt repository, not from this manifest.
+
+# Native build dependencies required by native Node modules
+build-essential
+?pkg-config
+?libssl-dev
+
+# Terminal and process utilities used during development
+lsof
+net-tools
+?htop
+?sqlite3
+
+# Containers support files
+uidmap
+?slirp4netns
+?fuse-overlayfs

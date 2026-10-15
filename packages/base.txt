@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# base.txt - minimum viable development machine.
+#
+# Manifest syntax:
+#   name       required package; an error if apt cannot resolve it
+#   ?name      optional package; silently skipped when unavailable
+#
+# Lines starting with '#' and blank lines are ignored.
+# ---------------------------------------------------------------------------
+
+# Core build toolchain
+build-essential
+ca-certificates
+curl
+wget
+gnupg
+unzip
+zip
+xz-utils
+
+# Shell and terminal fundamentals
+bash-completion
+zsh
+tmux
+less
+
+# Version control and collaboration
+git
+gh
+
+# Data processing and inspection
+jq
+tree
+
+# Static analysis for scripts written in this repository
+shellcheck
+
+# Search and navigation
+ripgrep
+fd
+fzf
+bat
+
+# Editor fallback when VS Code is not installed
+nano
+
+# Python bootstrap (mise manages the real interpreter versions)
+python3
+python3-pip
+python3-venv
+
+# Environment management helpers
+direnv

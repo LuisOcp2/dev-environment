@@ -1,0 +1,83 @@
+{
+  // ~/.config/Code/User/keybindings.json
+  //
+  // Managed by chezmoi.
+  //
+  // Deliberately small. Every binding replaces a default only when the
+  // replacement is genuinely better, so muscle memory keeps working and the
+  // file stays reviewable.
+  //
+  // Reference for the default chords:
+  // https://code.visualstudio.com/docs/getstarted/keybindings
+
+  [
+    // --- Terminal ---------------------------------------------------------
+    {
+      // Split terminal without creating a new terminal instance.
+      "key": "ctrl+shift+5",
+      "command": "workbench.action.terminal.split"
+    },
+    {
+      // Kill the active terminal.
+      "key": "ctrl+shift+w",
+      "command": "workbench.action.terminal.kill",
+      "when": "terminalFocus"
+    },
+
+    // --- Editor -----------------------------------------------------------
+    {
+      // Move a line up. Works in lists, tables and normal code alike.
+      "key": "alt+up",
+      "command": "editor.action.moveLinesUpAction",
+      "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+      "key": "alt+down",
+      "command": "editor.action.moveLinesDownAction",
+      "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+      // Duplicate the current line or selection above.
+      "key": "shift+alt+down",
+      "command": "editor.action.copyLinesDownAction",
+      "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+      // Select the next occurrence of the current selection.
+      "key": "ctrl+d",
+      "command": "editor.action.addSelectionToNextFindMatch",
+      "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+      // Expand the selection to the enclosing brackets.
+      "key": "shift+alt+right",
+      "command": "editor.action.smartSelect.expand",
+      "when": "editorTextFocus && !editorReadonly"
+    },
+
+    // --- Navigation -------------------------------------------------------
+    {
+      // Go to the symbol in the current file.
+      "key": "ctrl+shift+o",
+      "command": "workbench.action.gotoSymbol"
+    },
+    {
+      // Open the quick open file picker.
+      "key": "ctrl+p",
+      "command": "workbench.action.quickOpen"
+    },
+
+    // --- Files -----------------------------------------------------------
+    {
+      // Rename the active file.
+      "key": "f2",
+      "command": "files.action.renameFileWithProvider",
+      "when": "explorerViewletVisible && filesExplorerFocus && !isInDiffEditor"
+    },
+    {
+      // Reveal the active file in the explorer.
+      "key": "ctrl+shift+e",
+      "command": "revealInExplorer"
+    }
+  ]
+}

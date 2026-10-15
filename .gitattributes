@@ -1,0 +1,26 @@
+# Normalize line endings in the repository.
+* text=auto eol=lf
+
+# Scripts must always be LF with a shebang.
+*.sh text eol=lf
+bootstrap.sh text eol=lf
+
+# Windows-only scripts.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Keep generated or local-only files out of language statistics and diffs.
+home/dot_config/mise/mise.local.toml linguist-vendored
+*.md linguist-documentation

@@ -1,0 +1,229 @@
+{
+  // ~/.config/Code/User/settings.json
+  //
+  // Managed by chezmoi.
+  //
+  // Formatting policy: each language is configured explicitly. No extension
+  // is set as a universal global formatter, because two formatters fighting
+  // over the same file is the most common cause of noisy diffs.
+  //
+  // "editor.formatOnSave" is off globally and enabled per language below.
+  //
+  // Secrets: this file never contains tokens, endpoints with credentials or
+  // machine specific absolute paths.
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.codeActionsOnSave": {},
+  "editor.rulers": [100],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.trimAutoWhitespace": true,
+  "editor.insertFinalNewline": true,
+  "editor.renderWhitespace": "selection",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": true,
+  "editor.wordWrap": "off",
+  "editor.linkedEditing": true,
+  "editor.inlayHints.enabled": "onUnlessPressed",
+
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.next": true,
+    "**/__pycache__": true,
+    "**/.venv": true,
+    "**/target": true
+  },
+  "files.associations": {
+    "*.env.example": "dotenv",
+    "Dockerfile*": "dockerfile",
+    "*.md": "markdown",
+    "mise.toml": "toml",
+    ".chezmoi.toml.tmpl": "toml"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/*.lock": true,
+    "**/pnpm-lock.yaml": true
+  },
+  "search.useIgnoreFiles": true,
+  "search.followSymlinks": true,
+
+  // --- Git -----------------------------------------------------------------
+  "git.autofetch": true,
+  "git.autofetchPeriod": 180,
+  "git.confirmSync": true,
+  "git.enableSmartCommit": false,
+  "git.pruneOnFetch": true,
+  "git.defaultBranchName": "main",
+  "git.untrackedChanges": "separate",
+  // Only ignore the contents of these files, never the files themselves.
+  "git.ignoredRepositories": [],
+
+  // --- Terminal ------------------------------------------------------------
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.copyOnSelection": false,
+  "terminal.integrated.defaultProfile": "zsh",
+  "terminal.integrated.shell.linux": "/bin/zsh",
+
+  // --- Language specific formatters ----------------------------------------
+  // TypeScript / JavaScript / JSON: prettier.
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Python: ruff is both the linter and the formatter. No black, no isort,
+  // so there is a single owner for formatting.
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+
+  // Java: the language server formats. google-java-format is NOT installed by
+  // default; add it only after deciding which style the project uses.
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": false
+  },
+  "[gradle]": { "editor.formatOnSave": false },
+  "[properties]": { "editor.formatOnSave": false },
+
+  // Markdown: prettier handles tables and lists consistently.
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": false
+    }
+  },
+
+  // Shell: shfmt through the Shell Format extension.
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": false,
+    "editor.defaultFormatterOptions": {
+      "tabSize": 2,
+      "insertSpaces": true,
+      "executable": "chmod +x"
+    }
+  },
+
+  // SQL, Docker, TOML, YAML: leave formatting to the project formatter.
+  "[sql]": { "editor.formatOnSave": false },
+  "[dockerfile]": { "editor.formatOnSave": false },
+  "[dockercompose]": { "editor.formatOnSave": false },
+  "[toml]": { "editor.formatOnSave": false },
+  "[yaml]": { "editor.formatOnSave": false },
+  "[yml]": { "editor.formatOnSave": false },
+
+  // --- Linters --------------------------------------------------------------
+  // ESLint only reads project configuration; no fallback rules are injected
+  // and ESLint never formats, so it cannot fight prettier.
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.format.enable": false,
+
+  // --- Python analysis ------------------------------------------------------
+  "python.defaultInterpreterPath": "python3",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.inlayHints.variableTypes": true,
+  "python.testing.pytestEnabled": true,
+
+  // --- Docker ---------------------------------------------------------------
+  "docker.lsp.experimental": true,
+  "docker.showStartPage": false,
+
+  // --- Markdown preview -----------------------------------------------------
+  "markdown.preview.scrollEditorWithPreview": true,
+  "markdown.preview.scrollPreviewWithEditor": true,
+  "markdown.validate.enabled": true,
+  "markdown.validate.frontMatter": "off",
+  "markdown.links": "follow.file",
+
+  // --- Trust and privacy ---------------------------------------------------
+  // Never execute repository code automatically in the integrated terminal.
+  "security.workspace.trust.enabled": true,
+  "security.workspace.trust.untrustedFiles": "prompt",
+  "security.allowedFolders": [],
+
+  // --- Extensions ----------------------------------------------------------
+  "extensions.ignoreRecommendations": false,
+  "extensions.autoUpdate": true,
+
+  // --- Workbench -----------------------------------------------------------
+  "workbench.startupEditor": "welcomePage",
+  "workbench.editor.enablePreview": false,
+  "workbench.tree.indent": 12,
+  "workbench.list.smoothScrolling": true,
+  "workbench.settings.useSplitJSON": true,
+  "breadcrumbs.enabled": true,
+  "explorer.confirmDelete": true,
+  "explorer.confirmDragAndDrop": true,
+  "problems.autoReveal": true,
+  "problems.autoRevealInSidebarOnErrorNotifications": true
+}
